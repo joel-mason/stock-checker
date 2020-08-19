@@ -159,8 +159,8 @@ class StockTable extends Component {
         console.log("I re rendered!");
         return (
             <table className='highlight'>
-            {this.getTableHead(this.props.tableItems.items.stores)}
-            {this.getTableBody(this.props.tableItems.items.items)}
+            {typeof this.props.tableItems.items !== 'undefined' ? this.getTableHead(this.props.tableItems.items.stores) : null}
+            {typeof this.props.tableItems.items !== 'undefined' ? this.getTableBody(this.props.tableItems.items.items) : null}
             </table>
         )
     }
