@@ -258,87 +258,8 @@ router.get("/:userId/items", async (req, res) => {
     if(auth.status !== 200) {
         return res.status(auth.status).json({ message: auth.message });
     }
-    const POST_CODE = auth.user.postcode.replace(/\s/g, '');
-    var URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+1234567+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
-    var data = {}
-    try {
-        var retData = null;
-        var resp = await axios.get(URL);
-        console.log(resp);
-        retData = resp.data
-        data = {
-            stores: retData.stores.map((store, index) => {
-                return {
-                    "storeId": index,
-                    ["store"]: store.storeinfo.legacy_name
-                };
-            }),
-            items: []
-        };
-    } catch(error) {
-        console.log(error);
-        data = {
-            stores: [
-                {
-                    "storeId": 1,
-                    "store": "NOT FOUND"
-                },
-                {
-                    "storeId": 2,
-                    "store": "NOT FOUND"
-                },
-                {
-                    "storeId": 3,
-                    "store": "NOT FOUND"
-                }
-            ],
-            items: []
-        }
-
-    }    
-    console.log("data", data)
-    var items = await Item.find({ userId: auth.user.id}).select(["-_id", "-__v"]);
-    console.log("items", items)
-    var promises = items.map( async (item, index) => {
-        const POST_CODE = auth.user.postcode.replace(/\s/g, '');
-        let URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+item.productCode+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
-        var argosData = null;
-        try {
-            argosData = await axios.get(URL);
-            console.log("argos data", data);
-            const newRet = {
-                userId: item.userId,
-                productName: item.productName,
-                productCode: item.productCode
-            };
-            argosData.data.stores.forEach(function(store, index) {
-                if(store.availability !== null) {
-                    newRet['store'+index] = store.availability.quantityAvailable > 0;
-                } else {
-                    newRet['store'+index] = false;
-                }
-            })
-            return newRet;
-        } catch(error) {
-            console.log(error)
-            return {
-                userId: item.userId,
-                productName: item.productName,
-                productCode: item.productCode,
-                store0: false,
-                store1: false,
-                store2: false
-            }
-        }
- 
-    });
-    try {
-        data.items = await Promise.all(promises)
-    } catch(err) {
-        console.log("promise error", err);
-    }
-    console.log("data right at the end", data)
-    res.json({data})
+    var data = await getStockDetails(auth.user);
+    res.json({data});
     
 });
 
