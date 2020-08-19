@@ -7,14 +7,14 @@ import {
 export const getItems = (userId) => async dispatch => {
   const url = "/api/users/" + userId + "/items"  
   try {
-    var res = await axios
-    .get(url)
+    var res = await axios.get(url)
     const { data } = res.data;
     localStorage.setItem("items", data);
     // Set current user
     console.log(data);
     dispatch(setItems(data))
   } catch(err) {
+    console.log("error", err);
     dispatch({
       type: GET_ERRORS,
       payload: err
