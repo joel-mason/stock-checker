@@ -4,22 +4,22 @@ import {
   GET_USER_ITEMS,
   ITEMS_LOADING
 } from "./types";
-export const getItems = (userId) => async dispatch => {
+export const getItems = (userId) => dispatch => {
   const url = "/api/users/" + userId + "/items"  
-  try {
-    var res = await axios.get(url)
-    const { data } = res.data;
-    localStorage.setItem("items", data);
-    // Set current user
-    console.log(data);
-    dispatch(setItems(data))
-  } catch(err) {
+    axios.get(url).then(res => {
+      const { data } = res.data;
+      localStorage.setItem("items", data);
+      // Set current user
+      console.log(data);
+      dispatch(setItems(data))
+    })
+  .catch(err => {
     console.log("error", err);
     dispatch({
       type: GET_ERRORS,
       payload: err
     })
-  }
+  })
 };
 
 export const setNewItem = (userId, itemData) => dispatch => {
