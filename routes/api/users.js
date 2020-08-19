@@ -75,8 +75,8 @@ async function getStockDetails(user) {
 let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: 'stock.checker.app.2020@gmail.com', // generated ethereal user
-      pass: 'Lobster!40993', // generated ethereal password
+      user: keys.email, // generated ethereal user
+      pass: keys.emailPassword, // generated ethereal password
     },
 });
   // sending emails at periodic intervals
@@ -113,7 +113,7 @@ let transporter = nodemailer.createTransport({
             })
             let mailOptions = {
                 from: '"Stock Checker 👻" <stock.checker.app.2020@gmail.com>',
-                to: "joeldavidmason@gmail.com",
+                to: user.email,
                 subject: `Stock Alert!`,
                 text: text,
                 html: html
