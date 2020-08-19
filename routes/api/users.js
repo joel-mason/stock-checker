@@ -260,18 +260,41 @@ router.get("/:userId/items", async (req, res) => {
     }
     const POST_CODE = auth.user.postcode.replace(/\s/g, '');
     var URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+1234567+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
-    var retData = null;
-    var resp = await axios.get(URL);
-    retData = resp.data
-    var data = {
-        stores: retData.stores.map((store, index) => {
-            return {
-                "storeId": index,
-                ["store"]: store.storeinfo.legacy_name
-            };
-        }),
-        items: []
-    };
+    var data = {}
+    try {
+        var retData = null;
+        var resp = await axios.get(URL);
+        retData = resp.data
+        data = {
+            stores: retData.stores.map((store, index) => {
+                return {
+                    "storeId": index,
+                    ["store"]: store.storeinfo.legacy_name
+                };
+            }),
+            items: []
+        };
+    } catch(error) {
+        console.log(error);
+        data = {
+            stores: [
+                {
+                    "storeId": 1,
+                    "store": "NOT FOUND"
+                },
+                {
+                    "storeId": 2,
+                    "store": "NOT FOUND"
+                },
+                {
+                    "storeId": 3,
+                    "store": "NOT FOUND"
+                }
+            ],
+            items: []
+        }
+
+    }    
     var items = await Item.find({ userId: auth.user.id}).select(["-_id", "-__v"]);
     var promises = items.map( async (item, index) => {
         const POST_CODE = auth.user.postcode.replace(/\s/g, '');
@@ -293,6 +316,7 @@ router.get("/:userId/items", async (req, res) => {
             })
             return newRet;
         } catch(error) {
+            console.log(error)
             return {
                 userId: item.userId,
                 productName: item.productName,
