@@ -40,7 +40,7 @@ async function getStockDetails(user) {
     var items = await Item.find({ userId: user.id}).select(["-_id", "-__v"]);
     var promises = items.map( async (item, index) => {
         const POST_CODE = user.postcode.replace(/\s/g, '');
-        let URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+item.productCode.replace('/', '');+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
+        let URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+item.productCode.replace('/', '')+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
         var data = null;
         try {
             data = await axios.get(URL);
@@ -90,7 +90,7 @@ let transporter = nodemailer.createTransport({
         var items = await Item.find({ userId: user._id})
        await asyncForEach(items, async (item) => {
             const POST_CODE = user.postcode.replace(/\s/g, '');
-            var PRODUCT_CODE = item.productCode;
+            var PRODUCT_CODE = item.productCode.replace('/', '');
             const URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+PRODUCT_CODE+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
             var retData = null;
             var resp = await axios.get(URL)
