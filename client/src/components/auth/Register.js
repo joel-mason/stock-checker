@@ -10,6 +10,7 @@ class Register extends Component {
     super();
     this.state = {
       name: "",
+      postcode: "",
       email: "",
       password: "",
       password2: "",
@@ -23,7 +24,7 @@ class Register extends Component {
       this.props.history.push("/dashboard");
     }
   }
-  
+
   onChange = e => {
     this.setState({ [e.target.id]: e.target.value });
   };
@@ -32,6 +33,7 @@ class Register extends Component {
     e.preventDefault();
     const newUser = {
       name: this.state.name,
+      postcode: this.state.postcode,
       email: this.state.email,
       password: this.state.password,
       password2: this.state.password2
@@ -70,6 +72,20 @@ class Register extends Component {
                 />
                 <label htmlFor="name">Name</label>
                 <span className="red-text">{errors.name}</span>
+              </div>
+              <div className="input-field col s12">
+                <input
+                  onChange={this.onChange}
+                  value={this.state.postcode}
+                  error={errors.postcode}
+                  id="postcode"
+                  type="text"
+                  className={classnames("", {
+                    invalid: errors.postcode
+                  })}
+                />
+                <label htmlFor="postcode">Post Code</label>
+                <span className="red-text">{errors.postcode}</span>
               </div>
               <div className="input-field col s12">
                 <input

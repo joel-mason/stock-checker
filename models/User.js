@@ -6,6 +6,10 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  postcode: {
+      type: String,
+      required: true
+  },
   email: {
     type: String,
     required: true

@@ -11,3 +11,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.checkbox-pink[type="checkbox"] + label:before{
+  background: transparent;
+}
+.checkbox-pink[type="checkbox"]:checked + label:before{
+  border: 2px solid transparent;
+  border-bottom: 2px solid #ec407a;
+  border-right: 2px solid #ec407a;
+  background: transparent;
+}
+.checkbox-pink.filled-in[type="checkbox"] + label:after{
+  background: transparent;
+}
+.checkbox-pink.filled-in[type="checkbox"]:checked + label:after{
+  background: #ec407a;
+  border: 2px solid #ec407a;
+}
+.checkbox-pink.filled-in[type="checkbox"]:checked + label:before{
+  border-top: 2px solid transparent;
+  border-left: 2px solid transparent;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}

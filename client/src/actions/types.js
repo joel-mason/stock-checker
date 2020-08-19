@@ -1,3 +1,8 @@
 export const GET_ERRORS = "GET_ERRORS";
 export const USER_LOADING = "USER_LOADING";
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
+export const GET_USER_ITEMS = "GET_USER_ITEMS";
+export const ITEMS_LOADING = "ITEMS_LOADING";
+export const SET_USER_ITEMS = "SET_USER_ITEMS";
+export const DELETE_USER_ITEM = "DELETE_USER_ITEM";
+export const GET_STOCK_INFO = "GET_STOCK_INFO";
