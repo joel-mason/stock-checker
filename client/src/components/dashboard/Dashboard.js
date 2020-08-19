@@ -71,12 +71,8 @@ class Dashboard extends Component {
         return item !== data.productCode;
     })});
 		}
-	}
-
-	buildItemsWithStock(items) {
-
-	}
-
+  }
+  
   render() {
     const { user } = this.props.auth;
 		const { items } = this.props;
