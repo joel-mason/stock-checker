@@ -15,7 +15,10 @@ export const getItems = (userId) => async dispatch => {
     console.log(data);
     dispatch(setItems(data))
   } catch(err) {
-    console.log(err)
+    dispatch({
+      type: GET_ERRORS,
+      payload: err
+    })
   }
 };
 
