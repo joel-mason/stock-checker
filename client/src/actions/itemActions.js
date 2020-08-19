@@ -4,25 +4,22 @@ import {
   GET_USER_ITEMS,
   ITEMS_LOADING
 } from "./types";
-// Register User
-export const getItems = (userId) => dispatch => {
+export const getItems = (userId) => async dispatch => {
   const url = "/api/users/" + userId + "/items"  
-  axios
+  try {
+    var res = await axios
     .get(url)
-    .then(res => {
-        const { data } = res.data;
-        localStorage.setItem("items", data);
-        // Set current user
-        console.log(data);
-
-        dispatch(setItems(data));
-      })
-    .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
-    );
+    const { data } = res.data;
+    localStorage.setItem("items", data);
+    // Set current user
+    console.log(data);
+    dispatch(setItems(data))
+  } catch(err) {
+    dispatch({
+      type: GET_ERRORS,
+      payload: err.response
+    })
+  }
 };
 
 export const setNewItem = (userId, itemData) => dispatch => {
@@ -38,7 +35,7 @@ export const setNewItem = (userId, itemData) => dispatch => {
       .catch(err =>
         dispatch({
           type: GET_ERRORS,
-          payload: err.response.data
+          payload: err.response
         })
       );
   };

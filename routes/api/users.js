@@ -80,7 +80,7 @@ let transporter = nodemailer.createTransport({
     },
 });
   // sending emails at periodic intervals
-  cron.schedule("*/10 * * * *", async function(){
+  cron.schedule("* * * * *", async function(){
     console.log("---------------------");
     console.log("Running Cron Job");
     var users = await User.find();
@@ -95,7 +95,6 @@ let transporter = nodemailer.createTransport({
             var retData = null;
             var resp = await axios.get(URL)
             retData = resp.data
-            console.log("retData", retData);
             await asyncForEach(retData.stores, async (store) => {
                 if(store.availability !== null) {
                     if(store.availability[0].quantityAvailable > 0) {
@@ -130,15 +129,6 @@ let transporter = nodemailer.createTransport({
             console.log("---------------------");
         }
     });
-    /**
-    transporter.sendMail(mailOptions, function(error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email successfully sent!");
-      }
-    });
-    **/
   });
 
 // @route POST api/users/register
