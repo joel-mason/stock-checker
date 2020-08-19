@@ -21,7 +21,7 @@ class StockTable extends Component {
     static getDerivedStateFromProps(props, state) {
         console.log("props", props)
         console.log("state", state)
-        if(props.tableItems.items === 'undefined') {
+        if(typeof props.tableItems.items === 'undefined') {
             console.log("I was undefined")
             return null
         }
