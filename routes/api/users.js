@@ -40,7 +40,7 @@ async function getStockDetails(user) {
     var items = await Item.find({ userId: user.id}).select(["-_id", "-__v"]);
     var promises = items.map( async (item, index) => {
         const POST_CODE = user.postcode.replace(/\s/g, '');
-        let URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+item.productCode+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
+        let URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+item.productCode.replace('/', '');+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
         var data = null;
         try {
             data = await axios.get(URL);
@@ -80,7 +80,7 @@ let transporter = nodemailer.createTransport({
     },
 });
   // sending emails at periodic intervals
-  cron.schedule("* * * * *", async function(){
+  cron.schedule("*/10 * * * *", async function(){
     console.log("---------------------");
     console.log("Running Cron Job");
     var users = await User.find();
