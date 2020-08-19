@@ -264,6 +264,7 @@ router.get("/:userId/items", async (req, res) => {
     try {
         var retData = null;
         var resp = await axios.get(URL);
+        console.log(resp);
         retData = resp.data
         data = {
             stores: retData.stores.map((store, index) => {
@@ -295,19 +296,22 @@ router.get("/:userId/items", async (req, res) => {
         }
 
     }    
+    console.log("data", data)
     var items = await Item.find({ userId: auth.user.id}).select(["-_id", "-__v"]);
+    console.log("items", items)
     var promises = items.map( async (item, index) => {
         const POST_CODE = auth.user.postcode.replace(/\s/g, '');
         let URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+item.productCode+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
-        var data = null;
+        var argosData = null;
         try {
-            data = await axios.get(URL);
+            argosData = await axios.get(URL);
+            console.log("argos data", data);
             const newRet = {
                 userId: item.userId,
                 productName: item.productName,
                 productCode: item.productCode
             };
-            data.data.stores.forEach(function(store, index) {
+            argosData.data.stores.forEach(function(store, index) {
                 if(store.availability !== null) {
                     newRet['store'+index] = store.availability.quantityAvailable > 0;
                 } else {
@@ -328,7 +332,12 @@ router.get("/:userId/items", async (req, res) => {
         }
  
     });
-    data.items = await Promise.all(promises)
+    try {
+        data.items = await Promise.all(promises)
+    } catch(err) {
+        console.log("promise error", err);
+    }
+    console.log("data right at the end", data)
     res.json({data})
     
 });
