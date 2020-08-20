@@ -13,6 +13,10 @@ const ItemSchema = new Schema({
   productName: {
       type: String,
       required: true
+  },
+  lastEmailed: {
+    type: Date,
+    required: true
   }
 });
 module.exports = Item = mongoose.model("items", ItemSchema);

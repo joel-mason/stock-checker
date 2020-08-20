@@ -6,6 +6,7 @@ const keys = require("../../config/keys");
 const axios = require('axios');
 const cron = require("node-cron");
 let nodemailer = require("nodemailer");
+var dateTime = require('node-datetime');
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
@@ -51,7 +52,7 @@ async function getStockDetails(user) {
             };
             data.data.stores.forEach(function(store, index) {
                 if(store.availability !== null) {
-                    newRet['store'+index] = store.availability.quantityAvailable > 0;
+                    newRet['store'+index] = store.availability[0].quantityAvailable > 0;
                 } else {
                     newRet['store'+index] = false;
                 }
@@ -62,9 +63,9 @@ async function getStockDetails(user) {
                 userId: item.userId,
                 productName: item.productName,
                 productCode: item.productCode,
-                store0: false,
-                store1: false,
-                store2: false
+                store0: true,
+                store1: true,
+                store2: true
             }
         }
  
@@ -80,36 +81,59 @@ let transporter = nodemailer.createTransport({
     },
 });
   // sending emails at periodic intervals
-  cron.schedule("*/10 * * * *", async function(){
+  cron.schedule("* * * * *", async function(){
     console.log("---------------------");
     console.log("Running Cron Job");
     var users = await User.find();
-    users.forEach(async function(user) {
+    var dt = dateTime.create();
+    var formatted = dt.format('Y-m-d');
+    var today = new Date(formatted);
+    await asyncForEach(users, async (user) => {
         var user = user;
         var inStockItems = [];
-        var items = await Item.find({ userId: user._id})
+        var items = await Item.find({ userId: user._id, $or: [{ lastEmailed: null }, { lastEmailed: { $lt: today } }]})
        await asyncForEach(items, async (item) => {
             const POST_CODE = user.postcode.replace(/\s/g, '');
             var PRODUCT_CODE = item.productCode.replace('/', '');
             const URL = "https://www.argos.co.uk/stores/api/orchestrator/v0/locator/availability?origin="+POST_CODE+"&skuQty="+PRODUCT_CODE+"_1&maxResults=3&maxDistance=50&save=pdp-ss%3Ass&ssm=true";
             var retData = null;
-            var resp = await axios.get(URL)
-            retData = resp.data
-            await asyncForEach(retData.stores, async (store) => {
-                if(store.availability !== null) {
-                    if(store.availability[0].quantityAvailable > 0) {
-                        inStockItems.push({productName: item.productName, productCode: item.productCode, store: store.storeinfo.legacy_name});
-                    }
+            try {
+                var resp = await axios.get(URL)
+                retData = resp.data
+                var inStockItem = {
+                    productName: item.productName,
+                    productCode: item.productCode,
+                    inStock: false,
+                    stores : []
                 }
-            })
+                await asyncForEach(retData.stores, async (store) => {
+                    if(store.availability !== null) {
+                        if(store.availability[0].quantityAvailable > 0) {
+                            inStockItem.inStock = true
+                            inStockItem.stores.push(store.storeinfo.legacy_name);
+                        }
+                    }
+                })
+                if(inStockItem.inStock === true) {
+                    inStockItems.push(inStockItem);
+                }
+            } catch(err) {
+                console.error("Argos API Error");
+            }
+            
         })
-        console.log(inStockItems);
         if(inStockItems.length > 0) {
             var html = '<b>Items in stock</b><br>';
             var text = ''
-            inStockItems.forEach(function(inStockItem) {
-                html+='<b>Item: ' + inStockItem.productName + '</b> In stock in: ' + inStockItem.store + '<br>';
-                text+="item: " + inStockItem.productName + ' In stock in: ' + inStockItem.store + ' ';
+            var productCodes = [];
+            await asyncForEach(inStockItems, async(inStockItem) => {
+                html+='<b>Item:</b> ' + inStockItem.productName + '<br><b>In stock in: </b><br>';
+                text+="item: " + inStockItem.productName + ' In stock in: ';
+                inStockItem.stores.forEach(function(store) {
+                    html+= 'Store: ' + store + "<br>";
+                    text+= 'Store: ' + store + " ";
+                })
+                productCodes.push(inStockItem.productCode);
             })
             let mailOptions = {
                 from: '"Stock Checker 👻" <stock.checker.app.2020@gmail.com>',
@@ -123,12 +147,31 @@ let transporter = nodemailer.createTransport({
                     console.log(error);
                 } else {
                     console.log("Email successfully sent!");
+                    console.log("userId", user._id, "productCode", Array.from(productCodes))
+                    Item.updateMany(
+                        { 
+                            userId: user._id, 
+                            productCode: { 
+                                $in: Array.from(productCodes) 
+                            }
+                        }, 
+                        {
+                            $set : {
+                                "lastEmailed" : today
+                            }
+                        }
+                    ).then(result => {
+                        console.log("modified records for " + user._id, result.nModified);
+                    })
+                    .catch(err => {
+                        console.error("error updating record for userId: " + user._id);
+                    })
                 }
             });
-            console.log("Finished Cron Job");
-            console.log("---------------------");
         }
     });
+    console.log("Finished Cron Job");
+    console.log("---------------------");
   });
 
 // @route POST api/users/register
@@ -240,7 +283,8 @@ router.post("/:userId/items", async (req, res) => {
         const newItem = new Item({
             userId: auth.user.id,
             productCode: req.body.productCode,
-            productName: req.body.productName
+            productName: req.body.productName,
+            lastEmailed: new Date("1970-01-01")
         });
         // Hash password before saving in database
         var ret = await newItem.save();
