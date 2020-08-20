@@ -14,6 +14,10 @@ const ItemSchema = new Schema({
       type: String,
       required: true
   },
+  productPrice: {
+    type: Number,
+    required: true
+  },
   lastEmailed: {
     type: Date,
     required: true
