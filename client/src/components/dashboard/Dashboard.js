@@ -90,21 +90,11 @@ class Dashboard extends Component {
                 Welcome to the stock checker app!
               </p>
             </h4>
-						<div className="col s8">
-              <div className="col s8">
-                <input id="search" type="text" onChange={this.onSearchTextChange}></input>
-              </div>
-              <div className="col s4">
-                <a className="waves-effect waves-light btn modal-trigger center" href="#addItemModal">Search</a>
-              </div>
-						</div>
-            <div className="col s4">
+						<RemoveItemModal modalId={"removeItemModal"} onModalConfirmDelete={this.onModalConfirmDelete} />
+            <StockTable tableItems={items} onClickHandler={this.checkBoxOnClick}/>
+            <div style={{paddingTop: 20}}className="col s4">
 							<a ref={this.deleteCompaniesButton} className="waves-effect waves-light btn modal-trigger center" href="#removeItemModal" disabled={this.state.itemsToDelete.length === 0}>Remove Item(s)</a>
 						</div>
-						<RemoveItemModal modalId={"removeItemModal"} onModalConfirmDelete={this.onModalConfirmDelete} />
-            <AddItemModal modalId={"addItemModal"}  onChange={this.onModalAddItemChange} onSubmit={this.onModalAddItemSubmit}/>
-            <AddItemModal modalId={"searchItemModal"}  onChange={this.onModalAddItemChange} onSubmit={this.onModalAddItemSubmit}/>
-            <StockTable tableItems={items} onClickHandler={this.checkBoxOnClick}/>
           </div>
         </div>
       </div>
