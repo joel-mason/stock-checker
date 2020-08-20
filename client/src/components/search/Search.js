@@ -53,7 +53,7 @@ class Search extends Component {
                         <Card item={value} watchedItems={this.props.items.items} onClick={this.watchItem}/>
                     </div>
                 )
-            })};
+            })}
         </>
       )
   }
@@ -73,10 +73,10 @@ class Search extends Component {
               </p>
             </h4>
 			<div className="col s12">
-              <div className="col s8">
+              <div className="col s8 m10">
                 <input id="search" type="text" onChange={this.onSearchTextChange} required></input>
               </div>
-              <div className="col s4">
+              <div className="col s4 m2">
                 <a className="waves-effect waves-light btn modal-trigger center" onClick={this.onSearchButtonClick}>Search</a>
               </div>
 			</div>
