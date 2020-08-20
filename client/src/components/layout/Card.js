@@ -17,7 +17,6 @@ class Card extends Component {
     }
 
     alreadyWatched(watchedItems, item) {
-        console.log(watchedItems)
         var ret = false;
         watchedItems.items.forEach(element => {
             if(element.productCode === item.id) {

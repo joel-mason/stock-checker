@@ -17,6 +17,7 @@ class Search extends Component {
     }
     this.watchItem = this.watchItem.bind(this);
     this.fetchMoreData = this.fetchMoreData.bind(this)
+    this.onSearchButtonClick = this.onSearchButtonClick.bind(this)
   }
   
   componentWillMount() {
@@ -30,10 +31,11 @@ class Search extends Component {
     }
   }
 
-  onSearchButtonClick = async e => {
+  onSearchButtonClick(e) {
     e.preventDefault()
+    console.log("searchText", this.state.search)
     if(this.state.search !== '') {
-        await this.props.getArgosSearch(this.state.search, 1)
+        this.props.getArgosSearch(this.state.search, 1)
     } else {
         this.setState({textError: true})
     }
@@ -41,7 +43,6 @@ class Search extends Component {
   }
 
   watchItem(currentItem) {
-      console.log("currentItem", currentItem);
       this.props.setNewItem(this.props.auth.user.id, currentItem)
   }
 
@@ -54,7 +55,6 @@ class Search extends Component {
   }
 
   buildSearchResults(searchResults) {
-      console.log(searchResults)
       return(
           <>
             {searchResults.data.map((value, index) => {
@@ -72,7 +72,7 @@ class Search extends Component {
   
   render() {
     const { searchResults } = this.props;
-    console.log(searchResults.searchResults)
+    console.log("re-rendered")
     return (
       <div className="container">
         <div className="row" style={{width:"100%"}}>
