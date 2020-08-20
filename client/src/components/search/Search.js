@@ -49,7 +49,7 @@ class Search extends Component {
           <>
             {searchResults.data.map((value, index) => {
                 return (
-                    <div key={value.id} className="col s6">
+                    <div key={value.id} className="col s6 m4 l3">
                         <Card item={value} watchedItems={this.props.items.items} onClick={this.watchItem}/>
                     </div>
                 )
