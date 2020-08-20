@@ -28,6 +28,7 @@ class RemoveItemModal extends Component {
 
     onSubmit(e) {
         e.preventDefault();
+        console.log(e.target)
         this.props.onModalConfirmDelete(e);
         let instance = M.Modal.getInstance(this.Modal);
         instance.close();
@@ -42,8 +43,8 @@ class RemoveItemModal extends Component {
                 <h4>Delete Item?</h4>
               </div>
               <div className="modal-footer">
-                <a href="#!" onClick={this.onSubmit} className="modal-close waves-effect waves-green btn-flat">Yes</a>
-                <a href="#!" className="modal-close waves-effect waves-green btn-flat">No</a>
+                <a href="#!" onClick={this.onSubmit} className="modal-close red-text">Yes</a>
+                <a href="#!" className="modal-close">No</a>
               </div>
             </div>
         )

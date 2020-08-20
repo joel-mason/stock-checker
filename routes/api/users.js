@@ -283,6 +283,7 @@ router.post("/:userId/items", async (req, res) => {
     if (item) {
         return res.status(400).json({ email: "Item already being watched" });
     } else {
+        console.log(req.body.attributes.price)
         const newItem = new Item({
             userId: auth.user.id,
             productCode: req.body.id,
@@ -292,6 +293,7 @@ router.post("/:userId/items", async (req, res) => {
         });
         // Hash password before saving in database
         var ret = await newItem.save();
+        console.log(ret);
         var data =  await getStockDetails(auth.user);
         res.json({data});
             

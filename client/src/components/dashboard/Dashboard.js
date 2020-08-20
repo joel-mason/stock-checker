@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getItems, setNewItem, deleteItem } from "../../actions/itemActions";
-import StockTable from "../tables/StockTable"
-import AddItemModal from "../modals/AddItemModal"
 import RemoveItemModal from "../modals/RemoveItemModal";
+import CardDashboard from "../layout/CardDashboard";
 class Dashboard extends Component {
 
   constructor(props) {
@@ -15,7 +14,6 @@ class Dashboard extends Component {
 				productCode: '',
 				itemsToDelete: []
 		}
-		this.deleteCompaniesButton = React.createRef();
   }
 
   componentDidMount() {
@@ -51,8 +49,9 @@ class Dashboard extends Component {
 			})
 	}
 
-	onModalConfirmDelete = e => {
-		this.props.deleteItem(this.props.auth.user.id, this.state.itemsToDelete);
+	onModalConfirmDelete = (item) => {
+    console.log(item);
+		this.props.deleteItem(this.props.auth.user.id, [item.productCode]);
 		this.setState({
 			...this.state,
 			itemsToDelete: []
@@ -76,6 +75,24 @@ class Dashboard extends Component {
     })});
 		}
   }
+
+  buildSearchResults(items) {
+    console.log("buildSearchResults", this.props.items)
+    return(
+          <>
+            {items.items.map((value, index) => {
+                return (
+                    <div key={value.productCode} className="col s12 m6 l6">
+                        <CardDashboard item={value} 
+                              stores={this.props.items.items.stores}
+                              deleteItem={this.onModalConfirmDelete}
+                              />
+                    </div>
+                )
+            })}
+        </>
+      )
+  }
   
   render() {
     const { user } = this.props.auth;
@@ -91,10 +108,13 @@ class Dashboard extends Component {
               </p>
             </h4>
 						<RemoveItemModal modalId={"removeItemModal"} onModalConfirmDelete={this.onModalConfirmDelete} />
-            <StockTable tableItems={items} onClickHandler={this.checkBoxOnClick}/>
-            <div style={{paddingTop: 20}}className="col s4">
-							<a ref={this.deleteCompaniesButton} className="waves-effect waves-light btn modal-trigger center" href="#removeItemModal" disabled={this.state.itemsToDelete.length === 0}>Remove Item(s)</a>
-						</div>
+            {Object.entries(items.items).length !== 0 ? 
+            <div className="row">
+                <div className="col s12">
+                    <h4>Watched Items</h4>
+                </div>
+                {this.buildSearchResults(items.items)}
+            </div> : null}
           </div>
         </div>
       </div>
