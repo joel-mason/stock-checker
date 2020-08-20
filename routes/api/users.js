@@ -48,7 +48,9 @@ async function getStockDetails(user) {
             const newRet = {
                 userId: item.userId,
                 productName: item.productName,
-                productCode: item.productCode
+                productCode: item.productCode,
+                productPrice: item.price,
+                lastEmailed: item.lastEmailed
             };
             data.data.stores.forEach(function(store, index) {
                 if(store.availability !== null) {
@@ -81,7 +83,7 @@ let transporter = nodemailer.createTransport({
     },
 });
   // sending emails at periodic intervals
-  cron.schedule("* * * * *", async function(){
+  cron.schedule("*/30 * * * *", async function(){
     console.log("---------------------");
     console.log("Running Cron Job");
     var users = await User.find();
@@ -276,14 +278,16 @@ router.post("/:userId/items", async (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
-    var item = await Item.findOne({ userId: auth.user.id, productCode: req.body.productCode })
+    console.log(req.body)
+    var item = await Item.findOne({ userId: auth.user.id, productCode: req.body.id })
     if (item) {
         return res.status(400).json({ email: "Item already being watched" });
     } else {
         const newItem = new Item({
             userId: auth.user.id,
-            productCode: req.body.productCode,
-            productName: req.body.productName,
+            productCode: req.body.id,
+            productName: req.body.attributes.name,
+            productPrice: req.body.attributes.price,
             lastEmailed: new Date("1970-01-01")
         });
         // Hash password before saving in database

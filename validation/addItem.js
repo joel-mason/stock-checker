@@ -3,13 +3,13 @@ const isEmpty = require("is-empty");
 module.exports = function validateAddItemInput(data) {
   let errors = {};
 // Convert empty fields to an empty string so we can use validator functions
-  data.productCode = !isEmpty(data.productCode) ? data.productCode : "";
-  data.productName = !isEmpty(data.productName) ? data.productName : "";
+  data.id = !isEmpty(data.id) ? data.id : "";
+  data.attributes.name = !isEmpty(data.attributes.name) ? data.attributes.name : "";
 // Name checks
-  if (Validator.isEmpty(data.productCode)) {
+  if (Validator.isEmpty(data.id)) {
     errors.productCode = "Product Code field is required";
   }
-  if (Validator.isEmpty(data.productName)) {
+  if (Validator.isEmpty(data.attributes.name)) {
     errors.productName = "Product Code field is required";
   }
 return {

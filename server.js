@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const users = require("./routes/api/users");
+const argos = require("./routes/api/argos");
 const app = express();
 const path = require('path');
 const { response } = require("express");
@@ -31,6 +32,7 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 // Routes
 app.use("/api/users", users);
+app.use("/api/", argos);
 
 //serve static assets if production
 if(process.env.NODE_ENV === 'production') {

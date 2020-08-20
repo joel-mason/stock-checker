@@ -14,7 +14,6 @@ export const getItems = (userId) => dispatch => {
       dispatch(setItems(data))
     })
   .catch(err => {
-    console.log("error", err);
     dispatch({
       type: GET_ERRORS,
       payload: err

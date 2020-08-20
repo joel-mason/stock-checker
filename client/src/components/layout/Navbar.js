@@ -18,9 +18,31 @@ class Navbar extends Component {
             <Link to="/" style={{ fontFamily: "monospace" }} className="brand-logo left black-text">
                 STOCK CHECKER
             </Link>
-            <ul id="nav-mobile" className="right hide-on-sm-and-down">
+            {this.props.auth.isAuthenticated ?
+            <ul id="nav-mobile" className="right hide-on-sm-and-down">  
               <li>
-                {this.props.auth.isAuthenticated ?
+                  <Link
+                    to="/dashboard"
+                    style={{
+                      fontFamily: "monospace"
+                    }}
+                    className="black-text"
+                  >
+                    Dashboard
+                  </Link>
+                </li>         
+              <li>
+                  <Link
+                    to="/search"
+                    style={{
+                      fontFamily: "monospace"
+                    }}
+                    className="black-text"
+                  >
+                    Search Items
+                  </Link>
+                </li>
+                <li>
                   <Link
                     to="#"
                     style={{
@@ -31,9 +53,9 @@ class Navbar extends Component {
                   >
                     LOGOUT
                   </Link>
-                : null}
               </li>
             </ul>
+            : null}
           </div>
         </nav>
       </div>
