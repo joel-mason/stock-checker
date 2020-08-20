@@ -4,7 +4,14 @@ import "materialize-css/dist/css/materialize.min.css";
 
 class Card extends Component {
 
-    onClick(e) {
+    constructor(props) {
+        super(props);
+        this.watchItem = this
+            .watchItem
+            .bind(this);
+    }
+
+    watchItem(e) {
         e.preventDefault()
         this.props.onClick(this.props.item)
     }
@@ -50,7 +57,7 @@ class Card extends Component {
                           </div>
                           <div style={{padding: "0"}} className="col s8">
                               {!this.alreadyWatched(this.props.watchedItems, this.props.item) ? 
-                              <a style={{marginRight: 0}}className="right" href="#" onClick={() => this.onClick}>Watch Item</a>
+                              <a style={{marginRight: 0}} className="right" href="#" onClick={this.watchItem}>Watch Item</a>
                               : 
                               <a style={{marginRight: 0, color: "black"}}className="right" href="#">Already watched</a>}
                             

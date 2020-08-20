@@ -4,8 +4,8 @@ import {
   GET_ERRORS,
   ARGOS_SEARCH_LOADING
 } from "./types";
-export const getArgosSearch = (searchQuery) => dispatch => {
-  const url = "api/argos/search?searchQuery="+searchQuery;
+export const getArgosSearch = (searchQuery, pageNo) => dispatch => {
+  const url = "api/argos/search?searchQuery="+searchQuery + "&pageNo=" + pageNo;
     axios.get(url).then(res => {
       const { results } = res.data;
       localStorage.setItem("searchResults", results);

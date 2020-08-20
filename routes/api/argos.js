@@ -28,7 +28,7 @@ router.get("/argos/search", async (req, res) => {
         return res.status(401).json({ message: 'Missing Authorization Header' });
     }
     var searchQuery = req.query.searchQuery;
-    let URL = "https://www.argos.co.uk/finder-api/product;queryParams=search%3Aterm%3A"+ searchQuery +"%22%2C%22templateType%22%3Anull%7D;searchTerm="+ searchQuery+";searchType=null?returnMeta=true";
+    let URL = 'https://www.argos.co.uk/finder-api/product;queryParams={"filter[category]":"799632","page":"' + req.query.pageNo + '","templateType":null};searchTerm=weights;searchType=null?returnMeta=true'
     var data = null;
     try {
         data = await axios.get(URL);

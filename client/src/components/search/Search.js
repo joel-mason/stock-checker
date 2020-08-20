@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { getItems, setNewItem } from "../../actions/itemActions";
 import { getArgosSearch } from "../../actions/argosActions"
 import Card from "../layout/Card";
+import InfiniteScroll from "react-infinite-scroll-component";
 class Search extends Component {
 
   constructor(props) {
@@ -11,9 +12,11 @@ class Search extends Component {
     this.state = {
         ...this.state,
         search: '',
-        textError: false
+        textError: false,
+        pageNo: 1
     }
     this.watchItem = this.watchItem.bind(this);
+    this.fetchMoreData = this.fetchMoreData.bind(this)
   }
   
   componentWillMount() {
@@ -30,8 +33,7 @@ class Search extends Component {
   onSearchButtonClick = async e => {
     e.preventDefault()
     if(this.state.search !== '') {
-        await this.props.getArgosSearch(this.state.search)
-        console.log(this.props);
+        await this.props.getArgosSearch(this.state.search, 1)
     } else {
         this.setState({textError: true})
     }
@@ -41,6 +43,14 @@ class Search extends Component {
   watchItem(currentItem) {
       console.log("currentItem", currentItem);
       this.props.setNewItem(this.props.auth.user.id, currentItem)
+  }
+
+  async fetchMoreData() {
+    this.setState({
+        pageNo: this.state.pageNo++
+    }, () => 
+        this.props.getArgosSearch(this.state.search, this.state.pageNo)
+    );
   }
 
   buildSearchResults(searchResults) {
@@ -56,7 +66,7 @@ class Search extends Component {
                     </div>
                 )
             })}
-        </>
+            </>
       )
   }
   
@@ -78,7 +88,7 @@ class Search extends Component {
                 <input id="search" type="text" onChange={this.onSearchTextChange} required></input>
               </div>
               <div className="col s12 m2">
-                <a className="waves-effect waves-light btn modal-trigger center" onClick={this.onSearchButtonClick}>Search</a>
+                <a className="waves-effect waves-light btn center" onClick={this.onSearchButtonClick}>Search</a>
               </div>
 			</div>
           </div>
