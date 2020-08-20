@@ -49,7 +49,7 @@ class Search extends Component {
           <>
             {searchResults.data.map((value, index) => {
                 return (
-                    <div key={value.id} className="col s6 m4 l3">
+                    <div key={value.id} className="col s6 m4 l4">
                         <Card   item={value} 
                                 watchedItems={this.props.items.items} 
                                 onClick={this.watchItem}/>
@@ -86,7 +86,7 @@ class Search extends Component {
         {Object.entries(searchResults.searchResults).length !== 0 ? 
         <div className="row">
             <div className="col s12">
-                <h4>Search Results</h4>
+                <h4 className="center-align">Search Results</h4>
             </div>
             {this.buildSearchResults(searchResults.searchResults)}
         </div> : null}
