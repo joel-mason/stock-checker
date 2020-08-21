@@ -37,3 +37,8 @@ export const setItemsLoading = () => {
     type: ARGOS_SEARCH_LOADING
   };
 };
+
+export const removeItems = () => dispatch => {
+  localStorage.removeItem("searchResults");
+  dispatch(setItems({}));
+};

@@ -14,7 +14,7 @@ class Search extends Component {
         ...this.state,
         search: '',
         textError: false,
-        hasMore: true,
+        hasMore: false,
         pageNo: 2,
         items: []
     }
@@ -92,12 +92,7 @@ class Search extends Component {
             next={this.fetchMoreData}
             hasMore={this.state.hasMore}
             loader={<div className="center align"><Spinner /></div>}
-            style={{overflow: "unset"}}
-            endMessage={
-              <div className="col s12" style={{textAlign: 'center'}}>
-                <b>End of results</b>
-              </div>
-            }>
+            style={{overflow: "unset"}}>
             {this.state.items.map((value, index) => {
               return (
                   <div key={value.id} className="col s6 m4 l4">

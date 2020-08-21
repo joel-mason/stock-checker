@@ -1,12 +1,17 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
+import { removeItems } from "../../actions/argosActions";
 class Navbar extends Component {
   onLogoutClick = e => {
-    e.preventDefault();
     this.props.logoutUser();
+  };
+  onDashboardClick = e => {
+    e.preventDefault();
+    this.props.removeItems();
+    this.props.history.push("/dashboard")
   };
 
   render() {
@@ -29,8 +34,9 @@ class Navbar extends Component {
                       fontFamily: "monospace"
                     }}
                     className="black-text"
+                    onClick={this.onDashboardClick}
                   >
-                    Dashboard
+                    DASHBOARD
                   </Link>
                 </li>         
               <li>
@@ -41,7 +47,7 @@ class Navbar extends Component {
                     }}
                     className="black-text"
                   >
-                    Search Items
+                    SEARCH ITEMS
                   </Link>
                 </li>
                 <li>
@@ -67,8 +73,9 @@ class Navbar extends Component {
                       fontFamily: "monospace"
                     }}
                     className="black-text"
+                    onClick={this.onDashboardClick}
                   >
-                    Dashboard
+                    DASHBOARD
                   </Link>
                 </li>         
               <li>
@@ -79,7 +86,7 @@ class Navbar extends Component {
                     }}
                     className="black-text"
                   >
-                    Search Items
+                    SEARCH ITEMS
                   </Link>
                 </li>
                 <li>
@@ -113,5 +120,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { logoutUser }
-)(Navbar);
+  { logoutUser, removeItems }
+)(withRouter(Navbar));
