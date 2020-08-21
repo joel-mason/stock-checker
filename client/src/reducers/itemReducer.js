@@ -16,12 +16,14 @@ import {
       case GET_USER_ITEMS:
         return {
           ...state,
-          items: action.payload
+          items: action.payload,
+          loadingItems: false
         };
       case SET_USER_ITEMS:
         return {
             ...state,
-            items: action.payload
+            items: action.payload,
+            loadingItems: false
         };
       case ITEMS_LOADING:
         return {
@@ -31,7 +33,8 @@ import {
       case DELETE_USER_ITEM:
           return {
               ...state,
-              items: action.payload
+              items: action.payload,
+              loadingItems: false
           }
       default:
         return state;

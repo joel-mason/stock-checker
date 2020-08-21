@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { getItems, setNewItem, deleteItem } from "../../actions/itemActions";
 import RemoveItemModal from "../modals/RemoveItemModal";
 import CardDashboard from "../layout/CardDashboard";
+import Spinner from "../random/Spinner"
 class Dashboard extends Component {
 
   constructor(props) {
@@ -108,11 +109,14 @@ class Dashboard extends Component {
               </p>
             </h4>
 						<RemoveItemModal modalId={"removeItemModal"} onModalConfirmDelete={this.onModalConfirmDelete} />
+            <div className="col s12">
+              <h4>Watched Items</h4>
+            </div>
+            {items.loadingItems ?  
+              <Spinner />
+            : null}
             {Object.entries(items.items).length !== 0 ? 
             <div className="row">
-                <div className="col s12">
-                    <h4>Watched Items</h4>
-                </div>
                 {this.buildSearchResults(items.items)}
             </div> : null}
           </div>

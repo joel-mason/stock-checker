@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import { getItems, setNewItem } from "../../actions/itemActions";
 import { getArgosSearch } from "../../actions/argosActions"
 import Card from "../layout/Card";
+import Spinner from "../random/Spinner"
+import InfiniteScroll from 'react-infinite-scroll-component';
 class Search extends Component {
 
   constructor(props) {
@@ -12,14 +14,43 @@ class Search extends Component {
         ...this.state,
         search: '',
         textError: false,
-        pageNo: 1
+        hasMore: true,
+        pageNo: 2,
+        items: []
     }
     this.watchItem = this.watchItem.bind(this);
     this.fetchMoreData = this.fetchMoreData.bind(this)
     this.onSearchButtonClick = this.onSearchButtonClick.bind(this)
   }
+
+  static getDerivedStateFromProps(props, state) {
+    if(Object.entries(props.searchResults.searchResults).length !== 0) {
+      console.log("in here")
+      console.log("state", state, "props", props)
+      if(!props.searchResults.searchResults.data.some(r=> state.items.includes(r))) {
+        var totalPages = props.searchResults.searchResults.pageData.totalPages
+        console.log("pageSize", props.searchResults.searchResults.pageData.currentPage <= totalPages+1);
+        if(props.searchResults.searchResults.pageData.currentPage <= totalPages+1) {
+          console.log("I should be set")
+          return {
+            ...state,
+            pageNo: props.searchResults.searchResults.pageData.currentPage++,
+            hello: "Joel",
+            items: state.items.concat(props.searchResults.searchResults.data),
+            hasMore: props.searchResults.searchResults.pageData.currentPage <= totalPages+1
+          }
+        }
+      } else {
+        return {
+          ...state,
+          hasMore: false
+        }
+      }
+    }
+    return null
+  }
   
-  componentWillMount() {
+  componentDidMount() {
     this.props.getItems(this.props.auth.user.id);
   }
 
@@ -33,8 +64,12 @@ class Search extends Component {
   onSearchButtonClick(e) {
     e.preventDefault()
     console.log("searchText", this.state.search)
+    var pageNo = this.state.pageNo
+    this.setState({
+      items: []
+    });
     if(this.state.search !== '') {
-        this.props.getArgosSearch(this.state.search, 1)
+      this.props.getArgosSearch(this.state.search, 1)
     } else {
         this.setState({textError: true})
     }
@@ -45,24 +80,34 @@ class Search extends Component {
       this.props.setNewItem(this.props.auth.user.id, currentItem)
   }
 
-  fetchMoreData(pageNo) {
-        console.log(pageNo);
-        this.props.getArgosSearch(this.state.search, pageNo)
+  fetchMoreData = () => {
+        console.log(this.state.pageNo);
+        this.props.getArgosSearch(this.state.search, this.state.pageNo)
   }
 
   buildSearchResults(searchResults) {
       return(
-          <>
-            {searchResults.data.map((value, index) => {
-                return (
-                    <div key={value.id} className="col s6 m4 l4">
-                        <Card   item={value} 
-                                watchedItems={this.props.items.items} 
-                                onClick={this.watchItem}/>
-                    </div>
-                )
-            })}
-            </>
+          <InfiniteScroll
+            dataLength={this.state.items.length} //This is important field to render the next data
+            next={this.fetchMoreData}
+            hasMore={this.state.hasMore}
+            loader={<div className="center align"><Spinner /></div>}
+            style={{overflow: "unset"}}
+            endMessage={
+              <div className="col s12" style={{textAlign: 'center'}}>
+                <b>End of results</b>
+              </div>
+            }>
+            {this.state.items.map((value, index) => {
+              return (
+                  <div key={value.id} className="col s6 m4 l4">
+                      <Card   item={value} 
+                              watchedItems={this.props.items.items} 
+                              onClick={this.watchItem}/>
+                  </div>
+              )
+          })}
+          </InfiniteScroll>
       )
   }
 
@@ -70,7 +115,7 @@ class Search extends Component {
     const items = []
     for(var i = 0; i < pageData.totalPages; i++) { 
       var page = i+1;
-      items.push(<li key={"page"+page} className={pageData.currentPage === page ? "active" : "waves-effect"}><a href="#" onClick={this.fetchMoreData.bind(this, page)}>{page}</a></li>)
+      items.push(<li key={"page"+page} className={pageData.currentPage === page ? "active" : "waves-light"}><a href="#" onClick={this.fetchMoreData.bind(this, page)}>{page}</a></li>)
     }
     return items;
   }
@@ -80,9 +125,9 @@ class Search extends Component {
     if(pageData.totalPages > 1) {
       return (
         <ul className="pagination center-align">
-          <li className={pageData.currentPage === 1 ? "disabled" : ""}><a href="#!"><i className="material-icons">chevron_left</i></a></li>
+          <li className={pageData.currentPage === 1 ? "disabled" : ""}><a href="#" onClick={this.fetchMoreData.bind(this, (pageData.currentPage-1))}><i className="material-icons">chevron_left</i></a></li>
           {this.addPageNumber(pageData)}
-          <li className={pageData.currentPage === pageData.totalPages ? "disabled" : ""}><a href="#!"><i className="material-icons">chevron_right</i></a></li>
+          <li className={pageData.currentPage === pageData.totalPages ? "disabled" : ""}><a href="#" onClick={this.fetchMoreData.bind(this, (pageData.currentPage+1))}><i className="material-icons">chevron_right</i></a></li>
       </ul>
       )
     }
@@ -101,25 +146,26 @@ class Search extends Component {
                 Start by searching for an item!
               </p>
             </h4>
-			<div className="col s12">
+			      <div className="col s12">
               <div className="col s12 m10">
                 <input id="search" type="text" onChange={this.onSearchTextChange} required></input>
               </div>
               <div className="col s12 m2">
-                <a className="waves-effect waves-light btn center" onClick={this.onSearchButtonClick}>Search</a>
+                <a className="waves-light btn center" onClick={this.onSearchButtonClick}>Search</a>
               </div>
-			</div>
+			      </div>
+            {searchResults.loadingItems ?  
+              <Spinner />
+            : null}
           </div>
         </div>
+
         {Object.entries(searchResults.searchResults).length !== 0 ? 
         <div className="row">
-            <div className="col s12">
-                <h4 className="center-align">Search Results</h4>
-            </div>
+          <div className="col s12">
+                  <h4 className="center-align">Search Results</h4>
+          </div>
             {this.buildSearchResults(searchResults.searchResults)}
-            <div className="col s12"> 
-              {this.buildPagination(searchResults.searchResults.pageData)}
-              </div>
         </div> : null}
       </div>
     );

@@ -6,13 +6,13 @@ import {
 } from "./types";
 export const getArgosSearch = (searchQuery, pageNo) => dispatch => {
   const url = "api/argos/search?searchQuery="+searchQuery + "&pageNo=" + pageNo;
-    axios.get(url).then(res => {
-      const { results } = res.data;
-      localStorage.setItem("searchResults", results);
-      console.log(results)
-      // Set current user
-      dispatch(setItems(results))
-    })
+  axios.get(url).then(res => {
+    const { results } = res.data;
+    localStorage.setItem("searchResults", results);
+    console.log(results)
+    // Set current user
+    dispatch(setItems(results))
+  })
   .catch(err => {
     console.log("error", err);
     dispatch({
@@ -21,7 +21,7 @@ export const getArgosSearch = (searchQuery, pageNo) => dispatch => {
     })
   })
   console.log("I am loading")
-  dispatch(setItemsLoading)
+  dispatch(setItemsLoading())
 };
 
 // Set logged in user

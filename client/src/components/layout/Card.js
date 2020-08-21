@@ -58,7 +58,7 @@ class Card extends Component {
                               {!this.alreadyWatched(this.props.watchedItems, this.props.item) ? 
                               <a style={{marginRight: 0}} className="right" href="#" onClick={this.watchItem}>Watch Item</a>
                               : 
-                              <a style={{marginRight: 0, color: "black"}}className="right" href="#">Already watched</a>}
+                              <a style={{marginRight: 0, color: "black"}}className="right" href="#">Watching</a>}
                             
                           </div>
                       </div>

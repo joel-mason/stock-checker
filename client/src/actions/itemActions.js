@@ -6,19 +6,20 @@ import {
 } from "./types";
 export const getItems = (userId) => dispatch => {
   const url = "/api/users/" + userId + "/items"  
-    axios.get(url).then(res => {
-      const { data } = res.data;
-      localStorage.setItem("items", data);
-      // Set current user
-      console.log(data);
-      dispatch(setItems(data))
-    })
+  axios.get(url).then(res => {
+    const { data } = res.data;
+    localStorage.setItem("items", data);
+    // Set current user
+    console.log(data);
+    dispatch(setItems(data))
+  })
   .catch(err => {
     dispatch({
       type: GET_ERRORS,
       payload: err
     })
   })
+  dispatch(setItemsLoading());
 };
 
 export const setNewItem = (userId, itemData) => dispatch => {
@@ -32,7 +33,10 @@ export const setNewItem = (userId, itemData) => dispatch => {
         dispatch(setItems(data));
       })
       .catch(err =>
-        console.log(err)
+        dispatch({
+          type: GET_ERRORS,
+          payload: err
+        })
       );
   };
 
