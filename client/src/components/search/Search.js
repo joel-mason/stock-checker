@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { getItems, setNewItem } from "../../actions/itemActions";
 import { getArgosSearch } from "../../actions/argosActions"
 import Card from "../layout/Card";
-import InfiniteScroll from "react-infinite-scroll-component";
 class Search extends Component {
 
   constructor(props) {
@@ -46,12 +45,9 @@ class Search extends Component {
       this.props.setNewItem(this.props.auth.user.id, currentItem)
   }
 
-  async fetchMoreData() {
-    this.setState({
-        pageNo: this.state.pageNo++
-    }, () => 
-        this.props.getArgosSearch(this.state.search, this.state.pageNo)
-    );
+  fetchMoreData(pageNo) {
+        console.log(pageNo);
+        this.props.getArgosSearch(this.state.search, pageNo)
   }
 
   buildSearchResults(searchResults) {
@@ -68,6 +64,28 @@ class Search extends Component {
             })}
             </>
       )
+  }
+
+  addPageNumber(pageData) {
+    const items = []
+    for(var i = 0; i < pageData.totalPages; i++) { 
+      var page = i+1;
+      items.push(<li key={"page"+page} className={pageData.currentPage === page ? "active" : "waves-effect"}><a href="#" onClick={this.fetchMoreData.bind(this, page)}>{page}</a></li>)
+    }
+    return items;
+  }
+
+  buildPagination(pageData) {
+    console.log(pageData)
+    if(pageData.totalPages > 1) {
+      return (
+        <ul className="pagination center-align">
+          <li className={pageData.currentPage === 1 ? "disabled" : ""}><a href="#!"><i className="material-icons">chevron_left</i></a></li>
+          {this.addPageNumber(pageData)}
+          <li className={pageData.currentPage === pageData.totalPages ? "disabled" : ""}><a href="#!"><i className="material-icons">chevron_right</i></a></li>
+      </ul>
+      )
+    }
   }
   
   render() {
@@ -99,6 +117,9 @@ class Search extends Component {
                 <h4 className="center-align">Search Results</h4>
             </div>
             {this.buildSearchResults(searchResults.searchResults)}
+            <div className="col s12"> 
+              {this.buildPagination(searchResults.searchResults.pageData)}
+              </div>
         </div> : null}
       </div>
     );

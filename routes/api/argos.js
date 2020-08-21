@@ -33,6 +33,12 @@ router.get("/argos/search", async (req, res) => {
     try {
         data = await axios.get(URL);
         const results = {
+            pageData: {
+                totalData: data.data.data.response.meta.totalData,
+                pageSize: data.data.data.response.meta.pageSize,
+                currentPage: data.data.data.response.meta.currentPage,
+                totalPages: data.data.data.response.meta.totalPages
+            },
             data: data.data.data.response.data,
             links: data.data.data.response.links,
         };
@@ -40,6 +46,12 @@ router.get("/argos/search", async (req, res) => {
         res.json({results})
     } catch(error) {
         const results = {
+            pageData: {
+                totalData: 0,
+                pageSize: 0,
+                currentPage: 1,
+                totalPages: 1
+            },
             data: [],
             links: {}
         }

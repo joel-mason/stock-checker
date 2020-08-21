@@ -51,10 +51,10 @@ class Card extends Component {
               <div className="card-action">
                   <div style={{marginBottom: "0px"}} className="row">
                       <div className = "col s12">
-                          <div style={{padding: "0"}} className="col s4">
+                          <div style={{padding: "0"}} className="col s6">
                             <p style={{margin: 0}}>£{this.props.item.attributes.price}</p>
                           </div>
-                          <div style={{padding: "0"}} className="col s8">
+                          <div style={{padding: "0"}} className="col s6">
                               {!this.alreadyWatched(this.props.watchedItems, this.props.item) ? 
                               <a style={{marginRight: 0}} className="right" href="#" onClick={this.watchItem}>Watch Item</a>
                               : 

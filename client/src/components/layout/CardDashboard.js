@@ -34,8 +34,10 @@ class CardDashboard extends Component {
             <div className="col">
                 <div className="card horizontal">
                 <div className="card-image">
-                    <img alt="item" src={"https://media.4rgos.it/s/Argos/" + this.props.item.productCode + "_R_SET?w=540&h=800&qlt=75&fmt=webp"}/>
-                </div>
+                    <a href={"https://www.argos.co.uk/product/" + this.props.item.productCode} target="_blank">
+                        <img alt="item" src={"https://media.4rgos.it/s/Argos/" + this.props.item.productCode + "_R_SET?w=540&h=800&qlt=75&fmt=webp"}/>
+                    </a>
+                </div> 
                 <div className="card-stacked">
                     <div className="card-content">
                     <b>{this.props.item.productName}</b>
