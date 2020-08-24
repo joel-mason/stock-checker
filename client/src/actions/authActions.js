@@ -4,7 +4,9 @@ import jwt_decode from "jwt-decode";
 import {
   GET_ERRORS,
   SET_CURRENT_USER,
-  USER_LOADING
+  USER_LOADING,
+  EMAIL_FROM_RESET_TOKEN,
+  GET_SUCCESS
 } from "./types";
 // Register User
 export const registerUser = (userData, history) => dispatch => {
@@ -17,6 +19,60 @@ export const registerUser = (userData, history) => dispatch => {
         payload: err.response.data
       })
     );
+};
+
+export const resetPasswordWithEmail = (userData, history) => dispatch => {
+  axios
+    .put("/api/users/resetPasswordWithEmail", userData)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    }) 
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const resetPage = (token) => dispatch => {
+  axios
+    .get("/api/users/reset?token="+token)
+    .then(res => {
+      console.log(res.data);
+      dispatch({
+        type: EMAIL_FROM_RESET_TOKEN,
+        payload: res.data
+      })
+    }) 
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const forgotPassword = (userData) => dispatch => {
+  axios
+    .post("/api/users/forgotPassword", userData)
+    .then(res => {
+      console.log(res)
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    }) // re-direct to login on successful register
+    .catch(err => {
+      console.log(err.response.data)
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    });
 };
 // Login - get user token
 export const loginUser = userData => dispatch => {

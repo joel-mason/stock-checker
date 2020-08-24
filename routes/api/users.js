@@ -7,11 +7,13 @@ const axios = require('axios');
 const cron = require("node-cron");
 let nodemailer = require("nodemailer");
 var dateTime = require('node-datetime');
+const crypto = require('crypto');
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 const validateAddItemInput = require("../../validation/addItem");
 const validateAuthorization = require("../../validation/authorization");
+const validateForgotPassword = require("../../validation/forgotPassword");
 // Load Item model
 const Item = require("../../models/Item");
 // Load User model
@@ -210,6 +212,107 @@ router.post("/register", (req, res) => {
         }
     });
 });
+
+router.post("/forgotPassword", (req, res) => {
+    const { errors, isValid } = validateForgotPassword(req.body);
+    // Check validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+    console.log(req.get('host'))
+    const email = req.body.email;
+    const password = req.body.password;
+    User.findOne({ email: req.body.email }).then(user => {
+        if (!user) {
+            return res.status(400).json({ email: "Email doesn't exist" });
+        } else {
+            const token = crypto.randomBytes(20).toString('hex');
+            console.log(user.email)
+            User.updateOne({
+                email: user.email
+            },
+            {
+                $set : {
+                    "resetPasswordToken": token,
+                    "resetPasswordExpires": Date.now() + 3600000 
+                }
+            }).then(rett => {
+                console.log(rett)
+                let mailOptions = {
+                    from: '"Stock Checker 👻" <stock.checker.app.2020@gmail.com>',
+                    to: user.email,
+                    subject: `Link to Reset Password`,
+                    text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
+                            + 'Please click the following link, or paste this into your browser to complete the process within one hour of receiving in:\n\n'
+                            + (req.body.hostname || 'http://' + req.get('host')) + '/reset/' + token + '\n\n'
+                            + 'If you did not request this, please ignore this email and your password will remain unchanged'
+                };
+                transporter.sendMail(mailOptions, function(error, info) {
+                    if(error) {
+                        console.error('there was an error: ', error);
+                        res.status(500).send({message: 'something went wrong, please try again'});
+                    } else {
+                        res.status(200).send({message: 'recovery email sent'})
+                    }
+                });
+            })
+            
+        }
+    });
+})
+
+router.get("/reset", (req, res) => {
+    console.log(req.query.token)
+    User.findOne({
+        resetPasswordToken: req.query.token,
+        resetPasswordExpires: {
+            $gt: Date.now()
+        }
+    }).then(user => {
+        if(user === null) {
+            res.status(400).send({invalid: 'password reset link is invalid or has expired'});
+        } else {
+            res.status(200).send({
+                email: user.email,
+                message: 'password reset link good'
+            });
+        }
+    })
+    .catch(err => {
+        res.json(err);
+    });
+});
+
+router.put("/resetPasswordWithEmail", (req, res) => {
+    User.findOne({
+        email: req.body.email
+    }).then(user => {
+        if(user !== null) {
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(req.body.password, salt, (err, hash) => {
+                    if (err) throw err;
+                    User.updateOne({
+                        email: user.email
+                    },
+                    {
+                        $set : {
+                            "password": hash,
+                            "resetPasswordToken": token,
+                            "resetPasswordExpires": Date.now() + 3600000 
+                        }
+                    }).then(resp => {
+                        res.status(200).send({message: 'password updated!'})
+                    }).catch(err => {
+                        res.status(500).send({message: "something went wrong"})
+                    });
+                    
+                });
+            });
+        } else {
+            res.status(404).send({message: 'no user exists for email'});
+        }
+    })
+})
 
 // @route POST api/users/login
 // @desc Login user and return JWT token

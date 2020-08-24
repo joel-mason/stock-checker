@@ -11,6 +11,8 @@ import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import Reset from "./components/auth/Reset";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 import Search from "./components/search/Search";
@@ -51,6 +53,8 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/forgotPassword" component={ForgotPassword} />
+            <Route exact path="/reset/:token" component={Reset} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/search" component={Search} />
