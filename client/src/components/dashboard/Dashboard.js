@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { getItems, setNewItem, deleteItem } from "../../actions/itemActions";
 import RemoveItemModal from "../modals/RemoveItemModal";
 import CardDashboard from "../layout/CardDashboard";
-import Spinner from "../random/Spinner"
+import CircularProgress from '@material-ui/core/CircularProgress';
 class Dashboard extends Component {
 
   constructor(props) {
@@ -113,7 +113,7 @@ class Dashboard extends Component {
               <h4>Watched Items</h4>
             </div>
             {items.loadingItems ?  
-              <Spinner />
+              <CircularProgress />
             : null}
             {Object.entries(items.items).length !== 0 ? 
             <div className="row">
