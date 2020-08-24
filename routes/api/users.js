@@ -284,6 +284,11 @@ router.get("/reset", (req, res) => {
 });
 
 router.put("/resetPasswordWithEmail", (req, res) => {
+    const { errors, isValid } = validateForgotPassword(req.body);
+    // Check validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
     User.findOne({
         email: req.body.email
     }).then(user => {
