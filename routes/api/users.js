@@ -297,8 +297,8 @@ router.put("/resetPasswordWithEmail", (req, res) => {
                     {
                         $set : {
                             "password": hash,
-                            "resetPasswordToken": token,
-                            "resetPasswordExpires": Date.now() + 3600000 
+                            "resetPasswordToken": null,
+                            "resetPasswordExpires": null 
                         }
                     }).then(resp => {
                         res.status(200).send({message: 'password updated!'})
