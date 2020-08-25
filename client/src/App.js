@@ -16,6 +16,7 @@ import Reset from "./components/auth/Reset";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 import Search from "./components/search/Search";
+import Profile from "./components/profile/Profile";
 import M from  'materialize-css/dist/js/materialize.min.js';
 
 // Check for token to keep user logged in
@@ -58,6 +59,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/search" component={Search} />
+              <PrivateRoute exact path="/profile" component={Profile} />
             </Switch>
           </div>
         </Router>

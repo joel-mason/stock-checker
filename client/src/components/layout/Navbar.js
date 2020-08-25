@@ -22,11 +22,11 @@ class Navbar extends Component {
         <nav className="z-depth-0">
           <a href="#" data-target="slide-out" className="sidenav-trigger show-on-small hide-on-med-and-up black-text"><i className="material-icons">menu</i></a>
           <div className="nav-wrapper white">
-            <Link to="/" style={{ fontFamily: "monospace" }} className="brand-logo right black-text">
+            <Link to="/" style={{ fontFamily: "monospace" }} className="brand-logo left black-text">
                 STOCK CHECKER
             </Link>
             {this.props.auth.isAuthenticated ?
-            <ul id="nav-mobile" className="left hide-on-small-only">  
+            <ul id="nav-mobile" className="left hide-on-small-only right">  
               <li>
                   <Link
                     to="/dashboard"
@@ -48,6 +48,17 @@ class Navbar extends Component {
                     className="black-text"
                   >
                     SEARCH ITEMS
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/profile"
+                    style={{
+                      fontFamily: "monospace"
+                    }}
+                    className="black-text"
+                  >
+                    PROFILE
                   </Link>
                 </li>
                 <li>
@@ -87,6 +98,17 @@ class Navbar extends Component {
                     className="black-text"
                   >
                     SEARCH ITEMS
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/profile"
+                    style={{
+                      fontFamily: "monospace"
+                    }}
+                    className="black-text"
+                  >
+                    PROFILE
                   </Link>
                 </li>
                 <li>

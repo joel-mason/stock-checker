@@ -57,7 +57,7 @@ class AddItemModal extends Component {
                             <label htmlFor="productName">Product Name</label>
                         </div>
                         <div className="input-field col s12">
-                        <button className="btn waves-effect waves-light" type="submit" name="action">Submit
+                        <button className="btn waves-light" type="submit" name="action">Submit
                             <i className="material-icons right">send</i>
                         </button>
                         </div>
@@ -65,7 +65,7 @@ class AddItemModal extends Component {
                 </form>
               </div>
               <div className="modal-footer">
-                <a href="#!" className="modal-close waves-effect waves-green btn-flat">Close</a>
+                <a href="#!" className="modal-close waves-green btn-flat">Close</a>
               </div>
             </div>
         )

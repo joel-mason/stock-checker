@@ -14,6 +14,8 @@ const validateLoginInput = require("../../validation/login");
 const validateAddItemInput = require("../../validation/addItem");
 const validateAuthorization = require("../../validation/authorization");
 const validateForgotPassword = require("../../validation/forgotPassword");
+const validateResetPassword = require("../../validation/resetPasswords");
+const validateUpdateUserInput = require("../../validation/updateUser");
 // Load Item model
 const Item = require("../../models/Item");
 // Load User model
@@ -284,9 +286,10 @@ router.get("/reset", (req, res) => {
 });
 
 router.put("/resetPasswordWithEmail", (req, res) => {
-    const { errors, isValid } = validateForgotPassword(req.body);
+    const { errors, isValid } = validateResetPassword(req.body);
     // Check validation
     if (!isValid) {
+        console.log("not valid")
         return res.status(400).json(errors);
     }
     User.findOne({
@@ -367,6 +370,62 @@ router.post("/login", (req, res) => {
                     .json({ passwordincorrect: "Password incorrect" });
             }
         });
+    });
+});
+
+// @route POST api/users/login
+// @desc Login user and return JWT token
+// @access Public
+router.put("/:userId/update", (req, res) => {
+    // Form validation
+    var auth = validateAuthorization(req);
+    if(auth.status !== 200) {
+        return res.status(auth.status).json({ message: auth.message });
+    }
+    const { errors, isValid } = validateUpdateUserInput(req.body);
+    // Check validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+    const id = req.body.email;
+    const name = req.body.name;
+    const postcode = req.body.postcode;
+    // Find user by email
+    User.findOne({ _id: auth.user.id }).then(user => {
+        // Check if user exists
+        if (!user) {
+            return res.status(404).json({ emailnotfound: "Email not found" });
+        }
+        User.updateOne({
+            email: user.email
+        },
+        {
+            $set : {
+                "name": name,
+                "postcode": postcode
+            }
+        }).then(ret => {
+            const payload = {
+                id: user.id,
+                name: name,
+                postcode: postcode
+            };
+            // Sign token
+            jwt.sign(
+                payload,
+                keys.secretOrKey,
+                {
+                    expiresIn: 31556926 // 1 year in seconds
+                },
+                (err, token) => {
+                    res.json({
+                        success: true,
+                        token: "Bearer " + token,
+                        message: "User updated"
+                    });
+                }
+            );
+        })
     });
 });
 

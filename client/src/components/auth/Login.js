@@ -52,7 +52,7 @@ class Login extends Component {
       <div className="container">
         <div style={{ marginTop: "4rem" }} className="row">
           <div className="col s8 offset-s2">
-            <Link to="/" className="btn-flat waves-effect">
+            <Link to="/" className="btn-flat">
               <i className="material-icons left">keyboard_backspace</i> Back to
               home
             </Link>
@@ -89,6 +89,7 @@ class Login extends Component {
                   error={errors.password}
                   id="password"
                   type="password"
+                  autoComplete="current-password"
                   className={classnames("", {
                     invalid: errors.password || errors.passwordincorrect
                   })}
@@ -112,7 +113,7 @@ class Login extends Component {
                     marginTop: "1rem"
                   }}
                   type="submit"
-                  className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+                  className="btn btn-large waves-light hoverable blue accent-3"
                 >
                   Login
                 </button>

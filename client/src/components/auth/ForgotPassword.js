@@ -2,16 +2,21 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { forgotPassword } from "../../actions/authActions";
+import { forgotPassword, resetSuccessMessage } from "../../actions/authActions";
 import classnames from "classnames";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
-      errors: {}
+      errors: {},
+      disabled: false
     };
+  }
+  componentDidMount() {
+    this.props.resetSuccessMessage();
   }
 
   onChange = e => {
@@ -20,7 +25,9 @@ class ForgotPassword extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-
+    this.setState({
+        disabled: true
+    })
     const userData = {
       email: this.state.email,
       password: this.state.password,
@@ -30,7 +37,7 @@ class ForgotPassword extends Component {
   };
   render() {
     const { errors } = this.props;
-    const { success } = this.props;
+    const successMessage = this.props.auth.successMessage;
     return (
       <div className="container">
         <div style={{ marginTop: "4rem" }} className="row">
@@ -62,23 +69,28 @@ class ForgotPassword extends Component {
                 <label htmlFor="email">Email</label>
                 <span className="red-text">{errors.email}</span>
                 <span className="red-text">{errors.message}</span>
-                <span className="green-text">{success.message}</span>
+                <span className="green-text">{successMessage}</span>
+                {this.props.auth.loading ?  
+                    <CircularProgress />
+                : null}
               </div>
-              
+              {successMessage ? null : 
               <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-                <button
-                  style={{
-                    width: "150px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem"
-                  }}
-                  type="submit"
-                  className="btn btn-large waves-light hoverable blue accent-3"
-                >
-                  Login
-                </button>
-              </div>
+              <button
+                style={{
+                  width: "150px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "1rem"
+                }}
+                type="submit"
+                className="btn btn-large waves-light hoverable blue accent-3"
+              >
+                Reset Password
+              </button>
+            </div>
+              }
+              
             </form>
             
           </div>
@@ -91,15 +103,15 @@ class ForgotPassword extends Component {
 ForgotPassword.propTypes = {
     forgotPassword: PropTypes.func.isRequired,
     errors: PropTypes.object.isRequired,
-    success: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired
   };
 
 const mapStateToProps = state => ({
     errors: state.errors,
-    success: state.success
+    auth: state.auth
 });
 
 export default connect(
     mapStateToProps,
-    { forgotPassword},
+    { forgotPassword, resetSuccessMessage },
 )(ForgotPassword);

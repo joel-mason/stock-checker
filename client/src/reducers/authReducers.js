@@ -2,7 +2,9 @@ import {
     SET_CURRENT_USER,
     USER_LOADING,
     FP_EMAIL_SENT,
-    EMAIL_FROM_RESET_TOKEN
+    EMAIL_FROM_RESET_TOKEN,
+    USER_NOT_LOADING,
+    RESET_SUCCESS_MESSAGE
   } from "../actions/types";
   const isEmpty = require("is-empty");
   const initialState = {
@@ -13,6 +15,7 @@ import {
       email: '',
       message: ''
     },
+    successMessage: '',
     emailSent: false,
     
   };
@@ -22,25 +25,40 @@ import {
         return {
           ...state,
           isAuthenticated: !isEmpty(action.payload),
-          user: action.payload
+          user: action.payload,
+          successMessage: '',
         };
       case USER_LOADING:
         return {
           ...state,
           loading: true
         };
+      case USER_NOT_LOADING:
+        return {
+          ...state,
+          loading: false
+      };
       case FP_EMAIL_SENT:
         return {
           ...state,
-          emailSent: true
+          emailSent: true,
+          successMessage: action.payload.message,
+          loading: false
       };
+      case RESET_SUCCESS_MESSAGE: 
+        return {
+          ...state, 
+          successMessage: ''
+        }
       case EMAIL_FROM_RESET_TOKEN:
         return {
           ...state,
           email: {
             email: action.payload.email,
             message: action.payload.message
-          }
+          },
+          loading: false,
+          successMessage: '',
         }
       default:
         return state;

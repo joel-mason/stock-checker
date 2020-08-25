@@ -41,12 +41,12 @@ class Register extends Component {
     this.props.registerUser(newUser, this.props.history); 
   };
   render() {
-    const { errors } = this.state;
+    const { errors } = this.props;
   return (
       <div className="container">
         <div className="row">
           <div className="col s8 offset-s2">
-            <Link to="/" className="btn-flat waves-effect">
+            <Link to="/" className="btn-flat">
               <i className="material-icons left">keyboard_backspace</i> Back to
               home
             </Link>
@@ -134,7 +134,7 @@ class Register extends Component {
                     marginTop: "1rem"
                   }}
                   type="submit"
-                  className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+                  className="btn btn-large waves-light hoverable blue accent-3"
                 >
                   Sign up
                 </button>

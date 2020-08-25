@@ -19,9 +19,11 @@ module.exports = function validateRegisterInput(data) {
     errors.email = "Email is invalid";
   }
 // postcode checks
-  if (Validator.isEmpty(data.name)) {
-    errors.postcode = "Postcode field is required";
-  }
+if (Validator.isEmpty(data.postcode)) {
+  errors.postcode = "Postcode field is required";
+} else if (!data.postcode.match(/[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}/g)) {
+  errors.postcode = "Postcode is invalid";
+}
 // Password checks
   if (Validator.isEmpty(data.password)) {
     errors.password = "Password field is required";

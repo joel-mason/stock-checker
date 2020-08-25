@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { resetPasswordWithEmail, resetPage } from "../../actions/authActions";
 import classnames from "classnames";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Reset extends Component {
   constructor() {
@@ -34,24 +35,28 @@ class Reset extends Component {
     };
     this.props.resetPasswordWithEmail(newUser, this.props.history); 
   };
+
   render() {
     const { errors } = this.props;
-    const { success } = this.props
+    const { successMessage } = this.props.auth
   return (
       <div className="container">
         <div className="row">
           <div className="col s8 offset-s2">
-            <Link to="/" className="btn-flat waves-effect">
+            <Link to="/login" className="btn-flat">
               <i className="material-icons left">keyboard_backspace</i> Back to
-              home
+              Login
             </Link>
             <div className="col s12" style={{ paddingLeft: "11.250px" }}>
               <h4>
                 <b>Reset</b> password
               </h4>
             </div>
-            {errors.invalid ?
-            <p className="red-text">{errors.invalid}</p> :
+            {this.props.auth.loading ? 
+            <div className="col s12">
+              <CircularProgress /> 
+            </div>:
+            errors.invalid ? <p className="red-text">{errors.invalid}</p> :
             <form noValidate onSubmit={this.onSubmit}>
               <div className="input-field col s12">
                 <input
@@ -60,8 +65,13 @@ class Reset extends Component {
                   error={errors.password}
                   id="password"
                   type="password"
+                  autoComplete="new-password"
+                  className={classnames("", {
+                    invalid: errors.password2
+                  })}
                 />
                 <label htmlFor="password">Password</label>
+                <span className="red-text">{errors.password}</span>
               </div>
               <div className="input-field col s12">
                 <input
@@ -69,7 +79,8 @@ class Reset extends Component {
                   value={this.state.password2}
                   error={errors.password2}
                   id="password2"
-                  type="password"
+                  type="password" 
+                  autoComplete="new-password"
                   className={classnames("", {
                     invalid: errors.password2
                   })}
@@ -77,24 +88,27 @@ class Reset extends Component {
                 <label htmlFor="password2">Confirm Password</label>
                 <span className="red-text">{errors.password2}</span>
                 <span className="red-text">{errors.message}</span>
-                <span className="green-text">{success.message}</span>
+                <span className="green-text">{successMessage}</span>
               </div>
               <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-                <button
-                  style={{
-                    width: "150px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem"
-                  }}
-                  type="submit"
-                  className="btn btn-large waves-light hoverable blue accent-3"
-                >
-                  Reset Password
-                </button>
+              {successMessage ? null : 
+              <div className="col s12" style={{ paddingLeft: "11.250px" }}>
+              <button
+                style={{
+                  width: "150px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "1rem"
+                }}
+                type="submit"
+                className="btn btn-large waves-light hoverable blue accent-3"
+              >
+                Reset Password
+              </button>
+            </div>
+              }
               </div>
-            </form>
-            }
+            </form>}
           </div>
         </div>
       </div>
@@ -105,13 +119,11 @@ class Reset extends Component {
 Reset.propTypes = {
     errors: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
-    success: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
     auth: state.auth,
     errors: state.errors,
-    success: state.success
 });
 
 export default connect(
